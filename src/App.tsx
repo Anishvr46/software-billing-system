@@ -54,6 +54,8 @@ const App: React.FC = () => {
       if (session?.user) {
         const profile = await getProfile(session.user.id);
         setUser(profile);
+      } else {
+        setUser(null);
       }
       setLoading(false);
     });
