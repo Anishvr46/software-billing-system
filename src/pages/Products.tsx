@@ -43,10 +43,11 @@ const Products: React.FC = () => {
   const [viewProduct, setViewProduct] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductForm>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>({
     resolver: zodResolver(productSchema),
     defaultValues: { gst_percentage: 18, stock_quantity: 0 },
   });
+  const formErrors = errors as any;
 
   useEffect(() => { loadAll(); }, [search, brandFilter, categoryFilter]);
 
@@ -85,7 +86,7 @@ const Products: React.FC = () => {
     setModalOpen(true);
   };
 
-  const onSubmit = async (data: ProductForm) => {
+  const onSubmit = async (data: any) => {
     setSaving(true);
     try {
       if (editingProduct) {
@@ -246,7 +247,7 @@ const Products: React.FC = () => {
         <form className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <Input label="Product Name" {...register('product_name')} error={errors.product_name?.message} placeholder="e.g. iPhone 15 Pro" />
+              <Input label="Product Name" {...register('product_name')} error={formErrors.product_name?.message} placeholder="e.g. iPhone 15 Pro" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Brand</label>
@@ -254,14 +255,14 @@ const Products: React.FC = () => {
               <datalist id="brands-list">
                 {brands.map(b => <option key={b} value={b} />)}
               </datalist>
-              {errors.brand && <p className="mt-1 text-xs text-red-500">{errors.brand.message}</p>}
+              {formErrors.brand && <p className="mt-1 text-xs text-red-500">{formErrors.brand.message}</p>}
             </div>
-            <Select label="Category" options={CATEGORIES.map(c => ({ value: c, label: c }))} placeholder="Select category" {...register('category')} error={errors.category?.message} />
+            <Select label="Category" options={CATEGORIES.map(c => ({ value: c, label: c }))} placeholder="Select category" {...register('category')} error={formErrors.category?.message} />
             <Input label="IMEI Number (optional)" {...register('imei_number')} placeholder="15-digit IMEI" />
-            <Input label="Purchase Price (₹)" type="number" step="0.01" {...register('purchase_price')} error={errors.purchase_price?.message} />
-            <Input label="Selling Price (₹)" type="number" step="0.01" {...register('selling_price')} error={errors.selling_price?.message} />
-            <Input label="Stock Quantity" type="number" {...register('stock_quantity')} error={errors.stock_quantity?.message} />
-            <Input label="GST %" type="number" step="0.01" {...register('gst_percentage')} error={errors.gst_percentage?.message} />
+            <Input label="Purchase Price (₹)" type="number" step="0.01" {...register('purchase_price')} error={formErrors.purchase_price?.message} />
+            <Input label="Selling Price (₹)" type="number" step="0.01" {...register('selling_price')} error={formErrors.selling_price?.message} />
+            <Input label="Stock Quantity" type="number" {...register('stock_quantity')} error={formErrors.stock_quantity?.message} />
+            <Input label="GST %" type="number" step="0.01" {...register('gst_percentage')} error={formErrors.gst_percentage?.message} />
             <div className="sm:col-span-2">
               <Textarea label="Description (optional)" {...register('description')} placeholder="Product description..." />
             </div>

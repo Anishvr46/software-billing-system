@@ -42,7 +42,7 @@ const Billing: React.FC = () => {
   const [placing, setPlacing] = useState(false);
 
   const debounce = (fn: Function, delay: number) => {
-    let timer: NodeJS.Timeout;
+    let timer: any;
     return (...args: any) => {
       clearTimeout(timer);
       timer = setTimeout(() => fn(...args), delay);
@@ -80,7 +80,7 @@ const Billing: React.FC = () => {
     if (!newCustomerName || !newCustomerPhone) return toast.error('Name and phone are required');
     setAddingCustomer(true);
     try {
-      const customer = await createCustomer({ customer_name: newCustomerName, phone: newCustomerPhone });
+      const customer = await createCustomer({ customer_name: newCustomerName, phone: newCustomerPhone, email: null, address: null });
       setSelectedCustomer(customer);
       setCustomerModalOpen(false);
       setNewCustomerName('');
