@@ -49,7 +49,7 @@ export const Sidebar: React.FC = () => {
           </div>
           {sidebarOpen && (
             <div className="overflow-hidden">
-              <p className="font-bold text-sm text-white leading-tight">MobileZone</p>
+              <p className="font-bold text-sm text-white leading-tight">Anish Mobile Planet</p>
               <p className="text-xs text-slate-400 leading-tight">Billing System</p>
             </div>
           )}

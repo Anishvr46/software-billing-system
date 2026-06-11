@@ -102,7 +102,7 @@ const Login: React.FC = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/40 mb-4">
             <Smartphone size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white">MobileZone</h1>
+          <h1 className="text-3xl font-bold text-white">Anish Mobile Planet</h1>
           <p className="text-slate-400 mt-1">Billing & Inventory System</p>
         </div>
 
@@ -213,7 +213,7 @@ const Login: React.FC = () => {
         </div>
 
         <p className="text-center text-slate-500 text-xs mt-6">
-          © {new Date().getFullYear()} MobileZone Billing System
+          © {new Date().getFullYear()} Anish Mobile Planet Billing System
         </p>
       </div>
     </div>

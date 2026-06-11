@@ -1,9 +1,9 @@
 // Shop configuration - update these with your actual shop details
 export const SHOP_CONFIG = {
-  name: 'MobileZone Electronics',
+  name: 'Anish Mobile Planet',
   address: '123, Gandhi Street, T. Nagar, Chennai - 600 017',
   phone: '+91 98765 43210',
-  email: 'info@mobilezone.in',
+  email: 'info@anishmobileplanet.com',
   gstin: '33AABCU9603R1ZX',
   state: 'Tamil Nadu',
   stateCode: '33',

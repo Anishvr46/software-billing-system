@@ -171,7 +171,7 @@ const Employees: React.FC = () => {
       >
         <div className="space-y-4">
           <Input label="Full Name" value={newName} onChange={e => setNewName(e.target.value)} placeholder="Employee Name" />
-          <Input label="Email Address" type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="employee@mobilezone.in" />
+          <Input label="Email Address" type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="employee@anishmobileplanet.com" />
           <Input label="Password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 characters" />
           <Select
             label="Role"
