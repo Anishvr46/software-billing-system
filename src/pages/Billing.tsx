@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import { searchProductsForBilling } from '@/api/products';
-import { getCustomers, createCustomer } from '@/api/customers';
+import { getCustomers, createCustomer, updateCustomer } from '@/api/customers';
 import { createBill } from '@/api/billing';
 import { formatCurrency } from '@/utils/formatters';
 import type { Product, Customer } from '@/types';
@@ -32,12 +32,23 @@ const Billing: React.FC = () => {
   const [customerSearch, setCustomerSearch] = useState('');
   const [customerResults, setCustomerResults] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [customerEmail, setCustomerEmail] = useState('');
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [newCustomerPhone, setNewCustomerPhone] = useState('');
+  const [newCustomerEmail, setNewCustomerEmail] = useState('');
   const [addingCustomer, setAddingCustomer] = useState(false);
 
   const [discount, setDiscount] = useState(0);
+
+  // Keep customerEmail in sync with the selected customer
+  useEffect(() => {
+    if (selectedCustomer) {
+      setCustomerEmail(selectedCustomer.email || '');
+    } else {
+      setCustomerEmail('');
+    }
+  }, [selectedCustomer]);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi' | 'card'>('cash');
   const [placing, setPlacing] = useState(false);
 
@@ -80,11 +91,17 @@ const Billing: React.FC = () => {
     if (!newCustomerName || !newCustomerPhone) return toast.error('Name and phone are required');
     setAddingCustomer(true);
     try {
-      const customer = await createCustomer({ customer_name: newCustomerName, phone: newCustomerPhone, email: null, address: null });
+      const customer = await createCustomer({ 
+        customer_name: newCustomerName, 
+        phone: newCustomerPhone, 
+        email: newCustomerEmail || null, 
+        address: null 
+      });
       setSelectedCustomer(customer);
       setCustomerModalOpen(false);
       setNewCustomerName('');
       setNewCustomerPhone('');
+      setNewCustomerEmail('');
       toast.success('Customer created!');
     } catch (err: any) {
       toast.error(err.message);
@@ -108,6 +125,17 @@ const Billing: React.FC = () => {
       const gst_amount = getGSTAmount();
       const grand_total = getGrandTotal(discount);
 
+      // 1. Update customer email in database if entered/changed
+      let updatedCustomer = selectedCustomer;
+      if (customerEmail && customerEmail !== selectedCustomer.email) {
+        try {
+          const res = await updateCustomer(selectedCustomer.id, { email: customerEmail });
+          updatedCustomer = res;
+        } catch (updateErr) {
+          console.error('Failed to update customer email in DB:', updateErr);
+        }
+      }
+
       const bill = await createBill({
         customer_id: selectedCustomer.id,
         items,
@@ -120,8 +148,10 @@ const Billing: React.FC = () => {
       });
 
       toast.success('Bill created successfully!');
+
       clearCart();
       setSelectedCustomer(null);
+      setCustomerEmail('');
       setDiscount(0);
       navigate(`/invoice/${bill.id}`);
     } catch (err: any) {
@@ -231,17 +261,30 @@ const Billing: React.FC = () => {
         {/* Customer */}
         <Card title="Customer">
           {selectedCustomer ? (
-            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                  {selectedCustomer.customer_name.charAt(0)}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    {selectedCustomer.customer_name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm text-slate-900 dark:text-white">{selectedCustomer.customer_name}</p>
+                    <p className="text-xs text-slate-500">{selectedCustomer.phone}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-sm text-slate-900 dark:text-white">{selectedCustomer.customer_name}</p>
-                  <p className="text-xs text-slate-500">{selectedCustomer.phone}</p>
-                </div>
+                <button onClick={() => setSelectedCustomer(null)} className="text-slate-400 hover:text-red-500 text-xs transition-colors">Remove</button>
               </div>
-              <button onClick={() => setSelectedCustomer(null)} className="text-slate-400 hover:text-red-500 text-xs transition-colors">Remove</button>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">Customer Email (for digital invoice)</label>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="Enter customer's email..."
+                  className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+              </div>
             </div>
           ) : (
             <>
@@ -370,6 +413,7 @@ const Billing: React.FC = () => {
         <div className="space-y-4">
           <Input label="Full Name" value={newCustomerName} onChange={(e) => setNewCustomerName(e.target.value)} placeholder="Customer name" />
           <Input label="Phone" value={newCustomerPhone} onChange={(e) => setNewCustomerPhone(e.target.value)} placeholder="9876543210" type="tel" />
+          <Input label="Email (optional)" value={newCustomerEmail} onChange={(e) => setNewCustomerEmail(e.target.value)} placeholder="customer@email.com" type="email" />
         </div>
       </Modal>
     </div>
