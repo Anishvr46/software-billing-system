@@ -12,8 +12,8 @@ import {
   getProductWiseSales, getCustomerWiseSales
 } from '@/api/reports';
 import { formatCurrency, formatDateTime } from '@/utils/formatters';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas-pro';
 
 type ReportType = 'daily' | 'monthly' | 'product' | 'customer';
 
@@ -75,7 +75,9 @@ const Reports: React.FC = () => {
     if (!el) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
+      console.log('Starting Report PDF export with html2canvas...');
+      const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', logging: true });
+      console.log('html2canvas render complete. Generating PDF...');
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -83,7 +85,10 @@ const Reports: React.FC = () => {
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${reportType}_report_${today}.pdf`);
       toast.success('PDF exported!');
-    } catch { toast.error('PDF export failed'); }
+    } catch (err: any) { 
+      console.error('Report PDF Export Error:', err);
+      toast.error(`PDF export failed: ${err?.message || 'Unknown error'}`); 
+    }
     finally { setDownloading(false); }
   };
 

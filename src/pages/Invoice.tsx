@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Printer, Download, ArrowLeft, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas-pro';
 import { getBillById } from '@/api/billing';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { SHOP_CONFIG } from '@/config/shop';
@@ -37,7 +37,14 @@ const Invoice: React.FC = () => {
     if (!printRef.current) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(printRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+      console.log('Starting PDF download render with html2canvas...');
+      const canvas = await html2canvas(printRef.current, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#ffffff',
+        logging: true
+      });
+      console.log('html2canvas render complete. Generating PDF...');
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -45,7 +52,10 @@ const Invoice: React.FC = () => {
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${bill?.invoice_number || 'invoice'}.pdf`);
       toast.success('PDF downloaded!');
-    } catch { toast.error('Download failed'); }
+    } catch (err: any) { 
+      console.error('PDF Download Error:', err);
+      toast.error(`Download failed: ${err?.message || 'Unknown error'}`); 
+    }
     finally { setDownloading(false); }
   };
 
