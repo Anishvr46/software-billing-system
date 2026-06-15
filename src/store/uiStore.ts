@@ -13,7 +13,7 @@ export const useUIStore = create<UIState>()(
   persist(
     (set, get) => ({
       darkMode: false,
-      // Default: open on desktop, closed on mobile
+      // sidebarOpen is NOT persisted — always calculated fresh from screen size
       sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
       toggleDarkMode: () => {
         const next = !get().darkMode;
@@ -27,6 +27,11 @@ export const useUIStore = create<UIState>()(
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
       toggleSidebar: () => set({ sidebarOpen: !get().sidebarOpen }),
     }),
-    { name: 'ui-store' }
+    {
+      name: 'ui-store',
+      // IMPORTANT: Only persist darkMode. Never persist sidebarOpen so it
+      // always resets based on screen size on every page load.
+      partialize: (state) => ({ darkMode: state.darkMode }),
+    }
   )
 );
