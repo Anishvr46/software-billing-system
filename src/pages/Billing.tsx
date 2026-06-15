@@ -216,39 +216,43 @@ const Billing: React.FC = () => {
           ) : (
             <div className="space-y-3">
               {items.map((item) => (
-                <div key={item.product.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{item.product.product_name}</p>
-                    <p className="text-xs text-slate-400">{formatCurrency(item.unit_price)} × {item.quantity} + {item.gst_percentage}% GST</p>
-                  </div>
-                  <div className="flex items-center gap-2">
+                <div key={item.product.id} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <div className="flex items-start gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{item.product.product_name}</p>
+                      <p className="text-xs text-slate-400">{formatCurrency(item.unit_price)} × {item.quantity} + {item.gst_percentage}% GST</p>
+                    </div>
                     <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors"
+                      onClick={() => removeItem(item.product.id)}
+                      className="text-slate-400 hover:text-red-500 transition-colors p-1 flex-shrink-0"
                     >
-                      <Minus size={12} />
-                    </button>
-                    <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
-                    <button
-                      onClick={() => {
-                        if (item.quantity >= item.product.stock_quantity) {
-                          toast.error('Not enough stock');
-                          return;
-                        }
-                        updateQuantity(item.product.id, item.quantity + 1);
-                      }}
-                      className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors"
-                    >
-                      <Plus size={12} />
+                      <Trash2 size={15} />
                     </button>
                   </div>
-                  <p className="w-24 text-right font-semibold text-sm text-slate-900 dark:text-white">{formatCurrency(item.item_total)}</p>
-                  <button
-                    onClick={() => removeItem(item.product.id)}
-                    className="text-slate-400 hover:text-red-500 transition-colors p-1"
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors"
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                      <button
+                        onClick={() => {
+                          if (item.quantity >= item.product.stock_quantity) {
+                            toast.error('Not enough stock');
+                            return;
+                          }
+                          updateQuantity(item.product.id, item.quantity + 1);
+                        }}
+                        className="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                    <p className="font-semibold text-sm text-slate-900 dark:text-white">{formatCurrency(item.item_total)}</p>
+                  </div>
                 </div>
               ))}
             </div>

@@ -125,9 +125,9 @@ const Products: React.FC = () => {
     <div className="space-y-5">
       {/* Filters */}
       <Card>
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex flex-wrap gap-3 flex-1">
-            <div className="relative min-w-[200px] flex-1">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 flex-1">
+            <div className="relative flex-1">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 placeholder="Search products..."
@@ -139,7 +139,7 @@ const Products: React.FC = () => {
             <select
               value={brandFilter}
               onChange={(e) => setBrandFilter(e.target.value)}
-              className="px-3 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[130px]"
+              className="px-3 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Brands</option>
               {brands.map((b) => <option key={b} value={b}>{b}</option>)}
@@ -147,13 +147,13 @@ const Products: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[140px]"
+              className="px-3 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Categories</option>
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <Button icon={<Plus size={16} />} onClick={openAddModal}>
+          <Button icon={<Plus size={16} />} onClick={openAddModal} className="w-full sm:w-auto">
             Add Product
           </Button>
         </div>
@@ -168,64 +168,94 @@ const Products: React.FC = () => {
             <p className="text-sm mt-1">Add your first product to get started</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  {['Product', 'Brand', 'Category', 'Purchase', 'Selling', 'GST', 'Stock', 'Actions'].map((h) => (
-                    <th key={h} className="text-left py-3 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider first:pl-0 last:pr-0 last:text-right">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <td className="py-3 px-2 pl-0">
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white">{p.product_name}</p>
-                        {p.imei_number && (
-                          <p className="text-xs text-slate-400 font-mono">IMEI: {p.imei_number}</p>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{p.brand}</td>
-                    <td className="py-3 px-2"><Badge>{p.category}</Badge></td>
-                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{formatCurrency(p.purchase_price)}</td>
-                    <td className="py-3 px-2 font-semibold text-slate-900 dark:text-white">{formatCurrency(p.selling_price)}</td>
-                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{p.gst_percentage}%</td>
-                    <td className="py-3 px-2">{stockBadge(p.stock_quantity)}</td>
-                    <td className="py-3 px-2 pr-0">
-                      <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => setViewProduct(p)}
-                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors"
-                          title="View"
-                        >
-                          <Eye size={15} />
-                        </button>
-                        <button
-                          onClick={() => openEditModal(p)}
-                          className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors"
-                          title="Edit"
-                        >
-                          <Edit2 size={15} />
-                        </button>
-                        <button
-                          onClick={() => setDeleteId(p.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-600 transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Mobile card list */}
+            <div className="sm:hidden space-y-3">
+              {products.map((p) => (
+                <div key={p.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">{p.product_name}</p>
+                    <p className="text-xs text-slate-500">{p.brand} · {p.category}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-slate-400">₹{p.selling_price}</span>
+                      {stockBadge(p.stock_quantity)}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => setViewProduct(p)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-blue-600 transition-colors" title="View">
+                      <Eye size={15} />
+                    </button>
+                    <button onClick={() => openEditModal(p)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-blue-600 transition-colors" title="Edit">
+                      <Edit2 size={15} />
+                    </button>
+                    <button onClick={() => setDeleteId(p.id)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-red-600 transition-colors" title="Delete">
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700">
+                    {['Product', 'Brand', 'Category', 'Purchase', 'Selling', 'GST', 'Stock', 'Actions'].map((h) => (
+                      <th key={h} className="text-left py-3 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider first:pl-0 last:pr-0 last:text-right">
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {products.map((p) => (
+                    <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                      <td className="py-3 px-2 pl-0">
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">{p.product_name}</p>
+                          {p.imei_number && (
+                            <p className="text-xs text-slate-400 font-mono">IMEI: {p.imei_number}</p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{p.brand}</td>
+                      <td className="py-3 px-2"><Badge>{p.category}</Badge></td>
+                      <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{formatCurrency(p.purchase_price)}</td>
+                      <td className="py-3 px-2 font-semibold text-slate-900 dark:text-white">{formatCurrency(p.selling_price)}</td>
+                      <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{p.gst_percentage}%</td>
+                      <td className="py-3 px-2">{stockBadge(p.stock_quantity)}</td>
+                      <td className="py-3 px-2 pr-0">
+                        <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => setViewProduct(p)}
+                            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors"
+                            title="View"
+                          >
+                            <Eye size={15} />
+                          </button>
+                          <button
+                            onClick={() => openEditModal(p)}
+                            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit2 size={15} />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(p.id)}
+                            className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-600 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </Card>
 

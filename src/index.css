@@ -77,3 +77,19 @@ body {
     background: white !important;
   }
 }
+
+/* Mobile optimizations */
+button, a, [role="button"] {
+  touch-action: manipulation; /* removes 300ms tap delay */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent body scroll bounce on mobile */
+html {
+  overscroll-behavior: none;
+}
+
+/* Safe area insets for notched phones (iPhone X+) */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

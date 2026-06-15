@@ -68,11 +68,11 @@ export const StatCard: React.FC<StatCardProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{value}</p>
+          <p className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{value}</p>
           {change && (
             <p className={`text-xs mt-1 font-medium ${
               changeType === 'up' ? 'text-emerald-600' :
@@ -82,7 +82,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             </p>
           )}
         </div>
-        <div className={`p-3 rounded-xl ${colorMap[color] || colorMap.blue}`}>
+        <div className={`p-2 sm:p-3 rounded-xl ${colorMap[color] || colorMap.blue}`}>
           {icon}
         </div>
       </div>
@@ -95,12 +95,12 @@ export const Card: React.FC<{ children: React.ReactNode; className?: string; tit
 }) => (
   <div className={`bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 ${className}`}>
     {(title || action) && (
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700">
         {title && <h3 className="text-base font-semibold text-slate-900 dark:text-white">{title}</h3>}
         {action}
       </div>
     )}
-    <div className="p-6">{children}</div>
+    <div className="p-4 sm:p-6">{children}</div>
   </div>
 );
 

@@ -114,8 +114,8 @@ const Customers: React.FC = () => {
     <div className="space-y-5">
       {/* Filters */}
       <Card>
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="relative flex-1 min-w-[200px]">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               placeholder="Search by name, phone or email..."
@@ -124,7 +124,7 @@ const Customers: React.FC = () => {
               className="w-full pl-9 pr-3 py-2.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <Button icon={<Plus size={16} />} onClick={openAddModal}>Add Customer</Button>
+          <Button icon={<Plus size={16} />} onClick={openAddModal} className="w-full sm:w-auto">Add Customer</Button>
         </div>
       </Card>
 
@@ -136,50 +136,80 @@ const Customers: React.FC = () => {
             <p className="font-medium">No customers found</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  {['Name', 'Phone', 'Email', 'Address', 'Added', 'Actions'].map((h) => (
-                    <th key={h} className="text-left py-3 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider first:pl-0 last:pr-0 last:text-right">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {customers.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <td className="py-3 px-2 pl-0">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          {c.customer_name.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="font-medium text-slate-900 dark:text-white">{c.customer_name}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300 font-mono">{c.phone}</td>
-                    <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{c.email || '—'}</td>
-                    <td className="py-3 px-2 text-slate-500 max-w-[160px] truncate">{c.address || '—'}</td>
-                    <td className="py-3 px-2 text-slate-400 text-xs">{new Date(c.created_at).toLocaleDateString('en-IN')}</td>
-                    <td className="py-3 px-2 pr-0">
-                      <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => openHistory(c)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-purple-600 transition-colors" title="Purchase History">
-                          <History size={15} />
-                        </button>
-                        <button onClick={() => openEditModal(c)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors" title="Edit">
-                          <Edit2 size={15} />
-                        </button>
-                        <button onClick={() => setDeleteId(c.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-600 transition-colors" title="Delete">
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Mobile card list */}
+            <div className="sm:hidden space-y-3">
+              {customers.map((c) => (
+                <div key={c.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                    {c.customer_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">{c.customer_name}</p>
+                    <p className="text-xs text-slate-500 font-mono">{c.phone}</p>
+                    {c.email && <p className="text-xs text-slate-400 truncate">{c.email}</p>}
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => openHistory(c)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-purple-600 transition-colors" title="History">
+                      <History size={15} />
+                    </button>
+                    <button onClick={() => openEditModal(c)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-blue-600 transition-colors" title="Edit">
+                      <Edit2 size={15} />
+                    </button>
+                    <button onClick={() => setDeleteId(c.id)} className="p-2 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-red-600 transition-colors" title="Delete">
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700">
+                    {['Name', 'Phone', 'Email', 'Address', 'Added', 'Actions'].map((h) => (
+                      <th key={h} className="text-left py-3 px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider first:pl-0 last:pr-0 last:text-right">
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {customers.map((c) => (
+                    <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                      <td className="py-3 px-2 pl-0">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                            {c.customer_name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="font-medium text-slate-900 dark:text-white">{c.customer_name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 text-slate-600 dark:text-slate-300 font-mono">{c.phone}</td>
+                      <td className="py-3 px-2 text-slate-600 dark:text-slate-300">{c.email || '—'}</td>
+                      <td className="py-3 px-2 text-slate-500 max-w-[160px] truncate">{c.address || '—'}</td>
+                      <td className="py-3 px-2 text-slate-400 text-xs">{new Date(c.created_at).toLocaleDateString('en-IN')}</td>
+                      <td className="py-3 px-2 pr-0">
+                        <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => openHistory(c)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-purple-600 transition-colors" title="Purchase History">
+                            <History size={15} />
+                          </button>
+                          <button onClick={() => openEditModal(c)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 hover:text-blue-600 transition-colors" title="Edit">
+                            <Edit2 size={15} />
+                          </button>
+                          <button onClick={() => setDeleteId(c.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-500 hover:text-red-600 transition-colors" title="Delete">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </Card>
 

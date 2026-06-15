@@ -13,7 +13,8 @@ export const useUIStore = create<UIState>()(
   persist(
     (set, get) => ({
       darkMode: false,
-      sidebarOpen: true,
+      // Default: open on desktop, closed on mobile
+      sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
       toggleDarkMode: () => {
         const next = !get().darkMode;
         set({ darkMode: next });

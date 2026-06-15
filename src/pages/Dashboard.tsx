@@ -189,43 +189,70 @@ const Dashboard: React.FC = () => {
             </Link>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Invoice</th>
-                  <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Customer</th>
-                  <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Date</th>
-                  <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Payment</th>
-                  <th className="text-right py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {recentBills.map((bill) => (
-                  <tr key={bill.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="py-3">
-                      <Link
-                        to={`/invoice/${bill.id}`}
-                        className="font-mono text-blue-600 hover:underline text-xs font-medium"
-                      >
-                        {bill.invoice_number}
-                      </Link>
-                    </td>
-                    <td className="py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell">
+          <>
+            {/* Mobile card list (xs to sm) */}
+            <div className="sm:hidden space-y-3">
+              {recentBills.map((bill) => (
+                <div key={bill.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      to={`/invoice/${bill.id}`}
+                      className="font-mono text-blue-600 hover:underline text-xs font-semibold"
+                    >
+                      {bill.invoice_number}
+                    </Link>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 truncate">
                       {(bill as any).customer?.customer_name || 'Walk-in'}
-                    </td>
-                    <td className="py-3 text-slate-500 text-xs hidden md:table-cell">
-                      {formatDateTime(bill.created_at)}
-                    </td>
-                    <td className="py-3">{paymentMethodBadge(bill.payment_method)}</td>
-                    <td className="py-3 text-right font-semibold text-slate-900 dark:text-white">
-                      {formatCurrency(bill.grand_total)}
-                    </td>
+                    </p>
+                    <p className="text-xs text-slate-400">{formatDateTime(bill.created_at)}</p>
+                  </div>
+                  <div className="ml-3 text-right flex-shrink-0">
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">{formatCurrency(bill.grand_total)}</p>
+                    {paymentMethodBadge(bill.payment_method)}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop table (sm+) */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700">
+                    <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Invoice</th>
+                    <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Customer</th>
+                    <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Date</th>
+                    <th className="text-left py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Payment</th>
+                    <th className="text-right py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Amount</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {recentBills.map((bill) => (
+                    <tr key={bill.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="py-3">
+                        <Link
+                          to={`/invoice/${bill.id}`}
+                          className="font-mono text-blue-600 hover:underline text-xs font-medium"
+                        >
+                          {bill.invoice_number}
+                        </Link>
+                      </td>
+                      <td className="py-3 text-slate-700 dark:text-slate-300">
+                        {(bill as any).customer?.customer_name || 'Walk-in'}
+                      </td>
+                      <td className="py-3 text-slate-500 text-xs hidden md:table-cell">
+                        {formatDateTime(bill.created_at)}
+                      </td>
+                      <td className="py-3">{paymentMethodBadge(bill.payment_method)}</td>
+                      <td className="py-3 text-right font-semibold text-slate-900 dark:text-white">
+                        {formatCurrency(bill.grand_total)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </Card>
     </div>
